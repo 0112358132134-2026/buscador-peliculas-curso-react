@@ -14,14 +14,14 @@ export const BuscadorPeliculas = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if(busqueda.length > 0) fetchPeliculas()
+        fetchPeliculas()
     }
 
     const fetchPeliculas = async () => {
         try {
             const response = await fetch(`${urlBase}?query=${busqueda}&api_key=${API_KEY}`)
             const data = await response.json()            
-            setPeliculas(data)
+            setPeliculas(data.results)
         } catch (error) {
             console.error('Ha ocurrido un error: ', error)
         }
@@ -37,15 +37,21 @@ export const BuscadorPeliculas = () => {
                     placeholder="Escribe una película"
                     onChange={handleInputChange}
                 />
-                <button type="submit" className="search-button">Buscar</button>
+                <button type="submit" className="search-button">Buscar</button>                
             </form>
+                        
+            <h3>Total resultados: {peliculas.length}</h3>
 
             <div className="movie-list">
-                {peliculas.results.map( (pelicula) => (
+                {peliculas.map( (pelicula) => (
                     <div key={pelicula.id} className="movie-card">
-                        <img src={`https://image.tmdb.org/t/p/w500${pelicula.poster_path}`} alt={pelicula.title} />
+                        {pelicula.poster_path != null
+                            ? <img src={`https://image.tmdb.org/t/p/w500${pelicula.poster_path}`} alt={pelicula.title} />
+                            : <h2>Sin imagen</h2>
+                        }                    
+                        <button className="buttonInfo">Más información</button>
                         <h2>{pelicula.title}</h2>
-                        <p>{pelicula.overview}</p>
+                        <p>{pelicula.overview}</p>                          
                     </div>
                 ))}
             </div>
